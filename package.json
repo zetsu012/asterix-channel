@@ -17,7 +17,24 @@
         "command": "asterix-channel.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "asterix-channel-sidebar",
+          "title": "Asterix Channel",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "asterix-channel-sidebar": [
+        {
+          "id": "asterix-channel.helloWorldView",
+          "name": "Hello World"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run package",
