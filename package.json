@@ -16,6 +16,18 @@
       {
         "command": "asterix-channel.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "asterix-channel.webrtcTest",
+        "title": "Test WebRTC Connection (Webview)"
+      },
+      {
+        "command": "asterix-channel.startVoiceCall",
+        "title": "Start Voice Call Server"
+      },
+      {
+        "command": "asterix-channel.stopVoiceCall",
+        "title": "Stop Voice Call Server"
       }
     ],
     "viewsContainers": {
@@ -51,15 +63,19 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.109.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "typescript-eslint": "^8.54.0",
-    "eslint": "^9.39.2",
+    "@types/vscode": "^1.109.0",
+    "@types/ws": "^8.18.1",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
     "esbuild": "^0.27.2",
+    "eslint": "^9.39.2",
     "npm-run-all": "^4.1.5",
     "typescript": "^5.9.3",
-    "@vscode/test-cli": "^0.0.12",
-    "@vscode/test-electron": "^2.5.2"
+    "typescript-eslint": "^8.54.0"
+  },
+  "dependencies": {
+    "ws": "^8.19.0"
   }
 }
