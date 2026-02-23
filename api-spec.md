@@ -1,6 +1,6 @@
 # DevChannels API Specification
 
-**Base URL:** `https://vscode-channel-extension.vercel.app`
+**Base URL:** `https://vscode-channel-extension.onrender.com`
 
 ---
 

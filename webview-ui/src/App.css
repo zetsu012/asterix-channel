@@ -12,18 +12,114 @@ body {
   font-family: var(--vscode-font-family);
   background-color: var(--vscode-editor-background);
   color: var(--vscode-editor-foreground);
+  font-size: 13px;
 }
 
 .app {
-  padding: 20px;
+  padding: 12px;
 }
 
-h1 {
-  font-size: 24px;
+.header {
+  padding: 8px 4px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--vscode-editorLineNumber-foreground);
+}
+
+.header h2 {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--vscode-editorLineNumber-foreground);
+}
+
+.error {
+  padding: 12px;
+  background-color: rgba(255, 100, 100, 0.1);
+  border: 1px solid rgba(255, 100, 100, 0.3);
+  border-radius: 4px;
+  color: #ff6b6b;
   margin-bottom: 12px;
-  color: var(--vscode-editor-foreground);
 }
 
-p {
+.empty {
+  padding: 24px;
+  text-align: center;
   color: var(--vscode-descriptionForeground);
+}
+
+.channel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.channel-item {
+  border-radius: 4px;
+}
+
+.channel-header {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.channel-header:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.expand-icon {
+  font-size: 8px;
+  color: var(--vscode-editorLineNumber-foreground);
+  margin-right: 10px;
+  opacity: 0.6;
+}
+
+.channel-name {
+  font-weight: 500;
+  flex: 1;
+  font-size: 13px;
+}
+
+.channel-count {
+  font-size: 10px;
+  color: var(--vscode-descriptionForeground);
+  background-color: var(--vscode-button-secondaryBackground);
+  padding: 1px 6px;
+  border-radius: 8px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.sub-channels {
+  padding-left: 22px;
+  margin: 2px 0;
+}
+
+.sub-channel-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.sub-channel-item:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.sub-channel-icon {
+  color: var(--vscode-editorLineNumber-foreground);
+  margin-right: 10px;
+  font-size: 10px;
+  opacity: 0.5;
+}
+
+.sub-channel-name {
+  color: var(--vscode-editor-foreground);
+  font-size: 13px;
 }

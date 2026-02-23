@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
-import { WebViewMessage } from '../types';
+import { WebViewMessage, ParentChannel, ApiResponse } from '../types';
+
+const API_BASE_URL = 'https://vscode-channel-extension.onrender.com';
 
 export class DevChannelsPanel implements vscode.WebviewViewProvider {
   public static readonly viewType = 'devchannels.sidebar';
@@ -26,11 +28,36 @@ export class DevChannelsPanel implements vscode.WebviewViewProvider {
       switch (message.command) {
         case 'ready':
           console.log('WebView ready');
+          this._fetchChannels();
           break;
         default:
           console.log('Unknown message:', message);
       }
     });
+  }
+
+  private async _fetchChannels(): Promise<void> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/channels`);
+      const json = await response.json() as ApiResponse<ParentChannel[]>;
+      
+      if (json.status === 200 && json.data) {
+        this.postMessage({
+          command: 'channelsLoaded',
+          payload: json.data
+        });
+      } else {
+        this.postMessage({
+          command: 'error',
+          payload: json.message || 'Failed to fetch channels'
+        });
+      }
+    } catch (error) {
+      this.postMessage({
+        command: 'error',
+        payload: 'Failed to connect to server'
+      });
+    }
   }
 
   public postMessage(message: WebViewMessage): void {
