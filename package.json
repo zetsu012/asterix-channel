@@ -1,8 +1,8 @@
 {
-  "name": "asterix-channel",
-  "displayName": "asterix-channel",
-  "description": "mini-discord for vscode ",
-  "version": "0.0.1",
+  "name": "devchannels",
+  "displayName": "DevChannels",
+  "description": "Discord-like chat system inside VSCode",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.109.0"
   },
@@ -14,24 +14,25 @@
   "contributes": {
     "commands": [
       {
-        "command": "asterix-channel.helloWorld",
-        "title": "Hello World"
+        "command": "devchannels.open",
+        "title": "DevChannels: Open"
       }
     ],
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "asterix-channel-sidebar",
-          "title": "Asterix Channel",
+          "id": "devchannels-sidebar",
+          "title": "DevChannels",
           "icon": "resources/icon.svg"
         }
       ]
     },
     "views": {
-      "asterix-channel-sidebar": [
+      "devchannels-sidebar": [
         {
-          "id": "asterix-channel.helloWorldView",
-          "name": "Hello World"
+          "type": "webview",
+          "id": "devchannels.sidebar",
+          "name": "DevChannels"
         }
       ]
     }
@@ -42,13 +43,15 @@
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "watch:webview": "cd webview-ui && yarn dev",
     "package": "yarn run check-types && yarn run lint && node esbuild.js --production",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "build:webview": "cd webview-ui && yarn install && yarn build"
   },
   "devDependencies": {
     "@types/vscode": "^1.109.0",

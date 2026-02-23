@@ -1,0 +1,29 @@
+:root {
+  color-scheme: dark;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--vscode-font-family);
+  background-color: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground);
+}
+
+.app {
+  padding: 20px;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: var(--vscode-editor-foreground);
+}
+
+p {
+  color: var(--vscode-descriptionForeground);
+}

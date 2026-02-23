@@ -1,22 +1,29 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { HelloWorldProvider } from './sidebarProvider';
+import { DevChannelsPanel } from './panels/DevChannelsPanel';
 
 export function activate(context: vscode.ExtensionContext) {
-	console.log('Congratulations, your extension "asterix-channel" is now active!');
+  console.log('DevChannels extension is now active');
 
-	const disposable = vscode.commands.registerCommand('asterix-channel.helloWorld', () => {
-		vscode.window.showInformationMessage('Hello World from asterix-channel!');
-	});
+  const provider = new DevChannelsPanel(context.extensionUri);
 
-	const helloWorldProvider = new HelloWorldProvider();
-	const treeView = vscode.window.createTreeView('asterix-channel.helloWorldView', {
-		treeDataProvider: helloWorldProvider
-	});
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(
+      DevChannelsPanel.viewType,
+      provider
+    )
+  );
 
-	context.subscriptions.push(disposable, treeView);
+  context.subscriptions.push(
+    vscode.commands.registerCommand('devchannels.open', () => {
+      vscode.commands.executeCommand('workbench.view.extension.devchannels-sidebar');
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('devchannels.focus', () => {
+      vscode.commands.executeCommand('workbench.view.extension.devchannels-sidebar');
+    })
+  );
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}
