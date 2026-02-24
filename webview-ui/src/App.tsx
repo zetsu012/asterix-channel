@@ -71,7 +71,7 @@ function App() {
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, []);
+}, []);
 
   useEffect(() => {
     if (messageListRef.current && messages.length > 0) {
@@ -138,10 +138,6 @@ function App() {
     <div className="app">
       {view === 'channels' ? (
         <>
-          <div className="header">
-            <h2>Channels</h2>
-          </div>
-          
           {error && <div className="error">{error}</div>}
           
           {channels.length === 0 && !error && (
@@ -150,34 +146,26 @@ function App() {
           
           <div className="channel-list">
             {channels.map(channel => (
-              <div key={channel.id} className="channel-item">
+              <div key={channel.id}>
                 <div 
-                  className="channel-header"
+                  className="channel-item"
                   onClick={() => toggleChannel(channel.id)}
                 >
-                  <span className="expand-icon">
-                    {expandedChannels.has(channel.id) ? '▼' : '▶'}
+                  <span className="channel-icon">
+                    {expandedChannels.has(channel.id) ? '#' : '#'}
                   </span>
                   <span className="channel-name">{channel.name}</span>
-                  <span className="channel-count">
-                    {channel.sub_channels.length}
-                  </span>
                 </div>
-                
-                {expandedChannels.has(channel.id) && channel.sub_channels.length > 0 && (
-                  <div className="sub-channels">
-                    {channel.sub_channels.map(sub => (
-                      <div 
-                        key={sub.id} 
-                        className="sub-channel-item"
-                        onClick={() => openSubChannel(sub)}
-                      >
-                        <span className="sub-channel-icon">#</span>
-                        <span className="sub-channel-name">{sub.name}</span>
-                      </div>
-                    ))}
+                {expandedChannels.has(channel.id) && channel.sub_channels.map(sub => (
+                  <div 
+                    key={sub.id} 
+                    className="channel-item sub-channel-item"
+                    onClick={() => openSubChannel(sub)}
+                  >
+                    <span className="channel-icon">#</span>
+                    <span className="channel-name">{sub.name}</span>
                   </div>
-                )}
+                ))}
               </div>
             ))}
           </div>

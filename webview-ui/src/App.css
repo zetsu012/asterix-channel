@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap');
+
 :root {
   color-scheme: dark;
 }
@@ -9,28 +11,17 @@
 }
 
 body {
-  font-family: var(--vscode-font-family);
+  font-family: "Google Sans Code", monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
   background-color: var(--vscode-editor-background);
   color: var(--vscode-editor-foreground);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .app {
   padding: 12px;
-}
-
-.header {
-  padding: 8px 4px;
-  margin-bottom: 8px;
-  border-bottom: 1px solid var(--vscode-editorLineNumber-foreground);
-}
-
-.header h2 {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--vscode-editorLineNumber-foreground);
 }
 
 .error {
@@ -55,10 +46,6 @@ body {
 }
 
 .channel-item {
-  border-radius: 4px;
-}
-
-.channel-header {
   display: flex;
   align-items: center;
   padding: 6px 8px;
@@ -67,61 +54,27 @@ body {
   transition: background-color 0.15s ease;
 }
 
-.channel-header:hover {
+.channel-item:hover {
   background-color: var(--vscode-list-hoverBackground);
 }
 
-.expand-icon {
-  font-size: 8px;
-  color: var(--vscode-editorLineNumber-foreground);
-  margin-right: 10px;
-  opacity: 0.6;
+.channel-item.sub-channel-item {
+  padding-left: 24px;
 }
 
-.channel-name {
-  font-weight: 500;
-  flex: 1;
-  font-size: 13px;
-}
-
-.channel-count {
-  font-size: 10px;
-  color: var(--vscode-descriptionForeground);
-  background-color: var(--vscode-button-secondaryBackground);
-  padding: 1px 6px;
-  border-radius: 8px;
-  min-width: 20px;
-  text-align: center;
-}
-
-.sub-channels {
-  padding-left: 22px;
-  margin: 2px 0;
-}
-
-.sub-channel-item {
-  display: flex;
-  align-items: center;
-  padding: 5px 8px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.15s ease;
-}
-
-.sub-channel-item:hover {
-  background-color: var(--vscode-list-hoverBackground);
-}
-
-.sub-channel-icon {
+.channel-icon {
   color: var(--vscode-editorLineNumber-foreground);
   margin-right: 10px;
   font-size: 14px;
   opacity: 0.7;
 }
 
-.sub-channel-name {
-  color: var(--vscode-editor-foreground);
-  font-size: 13px;
+.channel-name {
+  font-family: "Google Sans Code", monospace;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 15px;
 }
 
 .messages-view {

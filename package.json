@@ -32,7 +32,8 @@
         {
           "type": "webview",
           "id": "devchannels.sidebar",
-          "name": "DevChannels"
+          "name": "DevChannels",
+          "icon": "resources/icon.svg"
         }
       ]
     }
