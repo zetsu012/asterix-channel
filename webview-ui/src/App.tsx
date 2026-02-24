@@ -109,10 +109,10 @@ function App() {
     setMessageInput('');
   };
 
-  const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
+  // const formatTimestamp = (timestamp: string) => {
+  //   const date = new Date(timestamp);
+  //   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  // };
 
   const sortedMessages = [...messages].sort((a, b) => 
     new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
@@ -192,15 +192,9 @@ function App() {
           <div className="message-list" ref={messageListRef}>
             {sortedMessages.map((msg) => (
               <div key={msg.id} className="message-item">
-                <div className="message-avatar">
-                  {msg.username.charAt(0).toUpperCase()}
-                </div>
                 <div className="message-content">
-                  <div className="message-header">
-                    <span className="message-username">{msg.username}</span>
-                    <span className="message-time">{formatTimestamp(msg.created_at)}</span>
-                  </div>
-                  <div className="message-text">{msg.content}</div>
+                  <span className="message-username">{msg.username}</span>
+                  <span className="message-text">{msg.content}</span>
                 </div>
               </div>
             ))}
