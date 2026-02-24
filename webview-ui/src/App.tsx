@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './App.css';
 
 interface SubChannel {
@@ -14,6 +14,13 @@ interface ParentChannel {
   sub_channels: SubChannel[];
 }
 
+interface Message {
+  id: string;
+  username: string;
+  content: string;
+  created_at: string;
+}
+
 interface WebViewMessage {
   command: string;
   payload?: unknown;
@@ -27,15 +34,23 @@ declare global {
   }
 }
 
+const vscodeApi = typeof window !== 'undefined' ? window.acquireVsCodeApi() : null;
+
 function App() {
   const [channels, setChannels] = useState<ParentChannel[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [expandedChannels, setExpandedChannels] = useState<Set<string>>(new Set());
+  const [view, setView] = useState<'channels' | 'messages'>('channels');
+  const [activeSubChannel, setActiveSubChannel] = useState<SubChannel | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [messageInput, setMessageInput] = useState('');
+  const messageListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const vscode = window.acquireVsCodeApi();
+    if (!vscodeApi) return;
     
-    vscode.postMessage({ command: 'ready' });
+    vscodeApi.postMessage({ command: 'ready' });
 
     const handleMessage = (event: MessageEvent<WebViewMessage>) => {
       const message = event.data;
@@ -43,14 +58,26 @@ function App() {
       if (message.command === 'channelsLoaded') {
         setChannels(message.payload as ParentChannel[]);
         setError(null);
+      } else if (message.command === 'messagesLoaded') {
+        setMessages(message.payload as Message[]);
+        setIsLoadingMessages(false);
+      } else if (message.command === 'newMessage') {
+        setMessages(prev => [...prev, message.payload as Message]);
       } else if (message.command === 'error') {
         setError(message.payload as string);
+        setIsLoadingMessages(false);
       }
     };
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
+
+  useEffect(() => {
+    if (messageListRef.current && messages.length > 0) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const toggleChannel = (id: string) => {
     setExpandedChannels(prev => {
@@ -64,47 +91,154 @@ function App() {
     });
   };
 
+  const openSubChannel = (subChannel: SubChannel) => {
+    setActiveSubChannel(subChannel);
+    setView('messages');
+    setIsLoadingMessages(true);
+    setMessages([]);
+    
+    if (vscodeApi) {
+      vscodeApi.postMessage({ command: 'loadMessages', payload: subChannel.id });
+    }
+  };
+
+  const goBack = () => {
+    setView('channels');
+    setActiveSubChannel(null);
+    setMessages([]);
+    setMessageInput('');
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const sortedMessages = [...messages].sort((a, b) => 
+    new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+  );
+
+  const sendMessage = () => {
+    if (!messageInput.trim() || !activeSubChannel || !vscodeApi) return;
+    vscodeApi.postMessage({ 
+      command: 'sendMessage', 
+      payload: { subChannelId: activeSubChannel.id, content: messageInput.trim() } 
+    });
+    setMessageInput('');
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
   return (
     <div className="app">
-      <div className="header">
-        <h2>Channels</h2>
-      </div>
-      
-      {error && <div className="error">{error}</div>}
-      
-      {channels.length === 0 && !error && (
-        <div className="empty">No channels yet</div>
-      )}
-      
-      <div className="channel-list">
-        {channels.map(channel => (
-          <div key={channel.id} className="channel-item">
-            <div 
-              className="channel-header"
-              onClick={() => toggleChannel(channel.id)}
-            >
-              <span className="expand-icon">
-                {expandedChannels.has(channel.id) ? '▼' : '▶'}
-              </span>
-              <span className="channel-name">{channel.name}</span>
-              <span className="channel-count">
-                {channel.sub_channels.length}
-              </span>
-            </div>
-            
-            {expandedChannels.has(channel.id) && channel.sub_channels.length > 0 && (
-              <div className="sub-channels">
-                {channel.sub_channels.map(sub => (
-                  <div key={sub.id} className="sub-channel-item">
-                    <span className="sub-channel-icon">○</span>
-                    <span className="sub-channel-name">{sub.name}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+      {view === 'channels' ? (
+        <>
+          <div className="header">
+            <h2>Channels</h2>
           </div>
-        ))}
-      </div>
+          
+          {error && <div className="error">{error}</div>}
+          
+          {channels.length === 0 && !error && (
+            <div className="empty">No channels yet</div>
+          )}
+          
+          <div className="channel-list">
+            {channels.map(channel => (
+              <div key={channel.id} className="channel-item">
+                <div 
+                  className="channel-header"
+                  onClick={() => toggleChannel(channel.id)}
+                >
+                  <span className="expand-icon">
+                    {expandedChannels.has(channel.id) ? '▼' : '▶'}
+                  </span>
+                  <span className="channel-name">{channel.name}</span>
+                  <span className="channel-count">
+                    {channel.sub_channels.length}
+                  </span>
+                </div>
+                
+                {expandedChannels.has(channel.id) && channel.sub_channels.length > 0 && (
+                  <div className="sub-channels">
+                    {channel.sub_channels.map(sub => (
+                      <div 
+                        key={sub.id} 
+                        className="sub-channel-item"
+                        onClick={() => openSubChannel(sub)}
+                      >
+                        <span className="sub-channel-icon">#</span>
+                        <span className="sub-channel-name">{sub.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className="messages-view">
+          <div className="messages-header">
+            <button className="back-button" onClick={goBack}>
+              ←
+            </button>
+            <span className="channel-title"># {activeSubChannel?.name}</span>
+          </div>
+          
+          {error && <div className="error">{error}</div>}
+          
+          {isLoadingMessages && (
+            <div className="loading">Loading messages...</div>
+          )}
+          
+          {!isLoadingMessages && messages.length === 0 && !error && (
+            <div className="empty">No messages yet</div>
+          )}
+          
+          <div className="message-list" ref={messageListRef}>
+            {sortedMessages.map((msg) => (
+              <div key={msg.id} className="message-item">
+                <div className="message-avatar">
+                  {msg.username.charAt(0).toUpperCase()}
+                </div>
+                <div className="message-content">
+                  <div className="message-header">
+                    <span className="message-username">{msg.username}</span>
+                    <span className="message-time">{formatTimestamp(msg.created_at)}</span>
+                  </div>
+                  <div className="message-text">{msg.content}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="message-input-container">
+            <div className="current-user">
+              <span className="user-label">Logged in as:</span>
+              <span className="user-name">ankit-chhetri</span>
+            </div>
+            <div className="input-row">
+              <input
+                type="text"
+                className="message-input"
+                placeholder="Type a message..."
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+              />
+              <button className="send-button" onClick={sendMessage}>
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

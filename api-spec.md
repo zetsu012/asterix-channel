@@ -209,7 +209,7 @@ GET /channels/{channel_id}/sub-channels
 Load message history for a sub-channel. Call this when user enters a room.
 
 ```
-GET /channels/{channel_id}/messages
+GET /channels/{sub_channel_id}/messages
 ```
 
 **Path Parameters:**
